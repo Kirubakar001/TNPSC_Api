@@ -1,5 +1,4 @@
 const userRouter = require("./user_router");
-const examRouter = require("./exam_routes");
 const express = require("express");
 const router = express.Router();
 
@@ -9,8 +8,8 @@ const application = [
     router: userRouter,
   },
   {
-    path: "/exam",
-    router: examRouter,
+    path: "/users",
+    router: userRouter,
   },
 ];
 

@@ -10,7 +10,7 @@ const application = [
   },
   {
     path: "/exam",
-    router: examRouter,
+    router: ,
   },
 ];
 
