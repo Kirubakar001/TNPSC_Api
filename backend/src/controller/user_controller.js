@@ -14,17 +14,17 @@ const sendOtp = async (req, res) => {
       const updatedUser = await userService.updateUserOtp(existingUser.id);
       return res
         .status(200)
-        .json({ message: "OTP updated", user: updatedUser });
+        .json({ message: "OTP updated", data: updatedUser, customerNumber: "9600760166" });
     } else {
       // New user → insert with OTP
       const newUser = await userService.createUserWithOtp(phone_no);
       return res
         .status(201)
-        .json({ message: "User created with OTP", user: newUser });
+        .json({ message: "User created with OTP", data: newUser, customerNumber: "9600760166" });
     }
   } catch (err) {
     console.error("Error in sendOtp:", err);
-    res.status(500).json({ error: "Database operation failed" });
+    res.status(500).json({ error: "Database operation failed", message: "User Error", customerNumber: "9600760166" });
   }
 };
 
@@ -62,7 +62,7 @@ const updateUser = async (req, res) => {
     // res.status(201).json({ message: "User added successfully", id: userId });
   } catch (err) {
     console.error("Error in createUser:", err);
-    res.status(500).json({ error: "Database operation failed" });
+    res.status(500).json({ error: "Database operation failed" ,message: "User Error",  });
   }
 };
 
