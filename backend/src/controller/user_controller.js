@@ -2,29 +2,41 @@ const userService = require("../service/user_service");
 
 const sendOtp = async (req, res) => {
   try {
-    const { phone_no } = req.body;
+    const { phone_no, from = 0 } = req.body;
     if (!phone_no) {
       return res.status(400).json({ error: "phone_no is required" });
     }
+    let fromValue;
 
-      const existingUser = await userService.checkUserByPhone(phone_no);
+    if (from == "truecaller") {
+      fromValue = 0;
+    } else {
+      fromValue = 1;
+    }
+
+    const existingUser = await userService.checkUserByPhone(phone_no);
 
     if (existingUser) {
       // User exists → update OTP
-      const updatedUser = await userService.updateUserOtp(existingUser.id);
+      const updatedUser = await userService.updateUserOtp(
+        existingUser.id,
+        fromValue
+      );
       return res
         .status(200)
-        .json({ message: "OTP updated", data: updatedUser, customerNumber: "9600760166" });
+        .json({ message: "OTP updated", data: updatedUser });
     } else {
       // New user → insert with OTP
-      const newUser = await userService.createUserWithOtp(phone_no);
+      const newUser = await userService.createUserWithOtp(phone_no, fromValue);
       return res
         .status(201)
-        .json({ message: "User created with OTP", data: newUser, customerNumber: "9600760166" });
+        .json({ message: "User created with OTP", data: newUser });
     }
   } catch (err) {
     console.error("Error in sendOtp:", err);
-    res.status(500).json({ error: "Database operation failed", message: "User Error", customerNumber: "9600760166" });
+    res
+      .status(500)
+      .json({ error: "Database operation failed", message: err.message });
   }
 };
 
@@ -62,7 +74,9 @@ const updateUser = async (req, res) => {
     // res.status(201).json({ message: "User added successfully", id: userId });
   } catch (err) {
     console.error("Error in createUser:", err);
-    res.status(500).json({ error: "Database operation failed" ,message: "User Error",  });
+    res
+      .status(500)
+      .json({ error: "Database operation failed", message: "User Error" });
   }
 };
 

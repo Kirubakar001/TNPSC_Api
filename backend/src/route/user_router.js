@@ -6,3 +6,4 @@ router.post("/otp_verify", userController.sendOtp);
 router.post("/update_user", userController.updateUser);
 
 module.exports = router;
+ 
