@@ -1,11 +1,35 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Route, Routes } from "react-router-dom";
+import Layout from "@/layouts/layout";
+import { PublicPages, ProtectedPages } from "./adminRouter";
+import PublicRoute from "./publicRoute";
+import ProtectedRoute from "./protectedRoute";
 
-// project imports
-import MainRoutes from './MainRoutes';
-import LoginRoutes from './LoginRoutes';
+export function Routers() {
+    return (
+        <Routes>
+            {/* Public pages will follow here like SignIn, SignUp */}
+            <Route element={<PublicRoute />}>
+                {PublicPages.map(({ path, title, element }) => (
+                    <Route
+                        key={title}
+                        path={path}
+                        element={element}
+                    />
+                ))}
+            </Route>
 
-// ==============================|| ROUTING RENDER ||============================== //
-
-const router = createBrowserRouter([MainRoutes, LoginRoutes], { basename: import.meta.env.VITE_APP_BASE_NAME });
-
-export default router;
+            {/* All main admin Protectedpages share the same layout */}
+            <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                    {ProtectedPages.map(({ path, title, element }) => (
+                        <Route
+                            key={title}
+                            path={path}
+                            element={element}
+                        />
+                    ))}
+                </Route>
+            </Route>
+        </Routes>
+    );
+}
