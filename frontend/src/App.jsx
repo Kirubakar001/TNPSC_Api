@@ -1,19 +1,17 @@
-import { RouterProvider } from 'react-router-dom';
+import { ThemeProvider } from "@/contexts/theme-context";
+import { Routers } from "./routes";
+import { Toaster } from "react-hot-toast";
 
-// project imports
-import router from 'routes';
-import ThemeCustomization from 'themes';
-
-import ScrollTop from 'components/ScrollTop';
-
-// ==============================|| APP - THEME, ROUTER, LOCAL ||============================== //
-
-export default function App() {
-  return (
-    <ThemeCustomization>
-      <ScrollTop>
-        <RouterProvider router={router} />
-      </ScrollTop>
-    </ThemeCustomization>
-  );
+function App() {
+    return (
+        <ThemeProvider storageKey="theme">
+            <Routers />
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
+        </ThemeProvider>
+    );
 }
+
+export default App;
