@@ -23,7 +23,7 @@ const sendOtp = async (req, res) => {
         fromValue
       );
       return res
-        .status(200)
+        .status(200)  
         .json({ message: "OTP updated", data: updatedUser });
     } else {
       // New user → insert with OTP
