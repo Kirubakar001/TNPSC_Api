@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../../db");
 
 // Generate 6-digit OTP
 const generateOtp = () => Math.floor(1000 + Math.random() * 9000);
@@ -28,6 +28,7 @@ const createUserWithOtp = async (phone_no, from) => {
   if (from === 1) {
     otp = generateOtp();
   }
+  console.log("Generated OTP:", phone_no);
 
   const [result] = await db.query(
     "INSERT INTO users (phone_no, otp) VALUES (?, ?)",
