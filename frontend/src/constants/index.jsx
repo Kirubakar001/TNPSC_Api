@@ -1,4 +1,4 @@
-import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
+import { ChartColumn, Group, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
@@ -14,55 +14,38 @@ export const navbarLinks = [
             },
         ],
     },
-    // [
-    //     {
-    //         title: "Customers",
-    //         links: [
-    //             {
-    //                 label: "Customers",
-    //                 icon: Users,
-    //                 path: "/customers",
-    //             },
-    //             {
-    //                 label: "New customer",
-    //                 icon: UserPlus,
-    //                 path: "/new-customer",
-    //             },
-    //             {
-    //                 label: "Verified customers",
-    //                 icon: UserCheck,
-    //                 path: "/verified-customers",
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         title: "Products",
-    //         links: [
-    //             {
-    //                 label: "Products",
-    //                 icon: Package,
-    //                 path: "/products",
-    //             },
-    //             {
-    //                 label: "New product",
-    //                 icon: PackagePlus,
-    //                 path: "/new-product",
-    //             },
-    //             {
-    //                 label: "Inventory",
-    //                 icon: ShoppingBag,
-    //                 path: "/inventory",
-    //             },
-    //         ],
-    //     },
-    // ],
     {
-        title: "Settings",
+        title: "Exam",
         links: [
             {
-                label: "Settings",
-                icon: Settings,
-                path: "/settings",
+                label: "Groups",
+                icon: Group,
+                path: "/group",
+            },
+        ],
+    },
+    {
+        title: "Subject",
+        links: [
+            {
+                label: "Subject",
+                icon: Group,
+                path: "/subject",
+            },
+            {
+                label: "Subject 1",
+                icon: Group,
+                path: "/subjects 1",
+            },
+            {
+                label: "Subject 2",
+                icon: Group,
+                path: "/subjects 2",
+            },
+            {
+                label: "Subject 3",
+                icon: Group,
+                path: "/subjects 3",
             },
         ],
     },

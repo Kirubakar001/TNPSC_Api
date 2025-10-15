@@ -9,7 +9,6 @@ axios.defaults.baseURL = baseUrl;
 axios.defaults.baseURL = baseUrl;
 
 export const signIn = async ({ emp_id, password }) => {
-    console.log("API Base URL:", baseUrl);
     const response = await axios.post("/admin/login", { emp_id, password });
     return response.data;
 };

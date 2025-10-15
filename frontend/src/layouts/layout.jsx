@@ -7,44 +7,52 @@ import { cn } from "@/utils/cn";
 import { useEffect, useRef, useState } from "react";
 
 const Layout = () => {
-    const isDesktopDevice = useMediaQuery("(min-width: 768px)");
-    const [collapsed, setCollapsed] = useState(!isDesktopDevice);
+  const isDesktopDevice = useMediaQuery("(min-width: 768px)");
+  const [collapsed, setCollapsed] = useState(!isDesktopDevice);
 
-    const sidebarRef = useRef(null);
+  const sidebarRef = useRef(null);
 
-    useEffect(() => {
-        setCollapsed(!isDesktopDevice);
-    }, [isDesktopDevice]);
+  // Update collapsed state when resizing
+  useEffect(() => {
+    setCollapsed(!isDesktopDevice);
+  }, [isDesktopDevice]);
 
-    useClickOutside([sidebarRef], () => {
-        if (!isDesktopDevice && !collapsed) {
-            setCollapsed(true);
-        }
-    });
+  // Close sidebar on mobile when clicking outside
+  useClickOutside([sidebarRef], () => {
+    if (!isDesktopDevice && !collapsed) {
+      setCollapsed(true);
+    }
+  });
 
-    return (
-        <div className="min-h-screen bg-slate-100 transition-colors dark:bg-slate-950">
-            <div
-                className={cn(
-                    "pointer-events-none fixed inset-0 -z-10 bg-black opacity-0 transition-opacity",
-                    !collapsed && "max-md:pointer-events-auto max-md:z-50 max-md:opacity-30",
-                )}
-            />
-            <Sidebar
-                ref={sidebarRef}
-                collapsed={collapsed}
-            />
-            <div className={cn("transition-[margin] duration-300", collapsed ? "md:ml-[70px]" : "md:ml-[240px]")}>
-                <Header
-                    collapsed={collapsed}
-                    setCollapsed={setCollapsed}
-                />
-                <div className="h-[calc(100vh-60px)] overflow-y-auto overflow-x-hidden p-6">
-                    <Outlet />
-                </div>
-            </div>
-        </div>
-    );
+  return (
+    <div className="min-h-screen bg-slate-100 transition-colors dark:bg-slate-950 flex">
+      {/* Overlay for mobile sidebar */}
+      <div
+        className={cn(
+          "pointer-events-none fixed inset-0 bg-black opacity-0 transition-opacity duration-300",
+          !collapsed && "pointer-events-auto z-40 opacity-30 md:hidden"
+        )}
+      />
+
+      {/* Sidebar */}
+      <Sidebar ref={sidebarRef} collapsed={collapsed} />
+
+      {/* Main Content */}
+      <div
+        className={cn(
+          "flex-1 flex flex-col transition-margin duration-300",
+          collapsed ? "md:ml-[70px]" : "md:ml-[240px]"
+        )}
+      >
+        <Header collapsed={collapsed} setCollapsed={setCollapsed} />
+
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default Layout;
