@@ -4,15 +4,18 @@ const getAllExamDetails = async (req, res) => {
   try {
     const details = await adminExamService.getExamDetails();
 
+    console.log(details);
+
     if (!details || details.length === 0) {
       return res.status(200).json({
-        success: true,
+        success: false,
         data: [],
         message: "No exam details found",
       });
     }
 
     res.status(200).json({
+      status: 200,
       success: true,
       data: details,
       message: "Exam details fetched successfully",
@@ -26,9 +29,11 @@ const getAllExamDetails = async (req, res) => {
 const insertExamDetails = async (req, res) => {
   try {
     const { title, sub_title } = req.body;
+    console.log(req.file);
+    console.log(req.body);
 
     // ✅ Check for missing fields
-    if (!title || !sub_title || !req.file) {
+    if (!title || !sub_title) {
       return res.status(400).json({
         success: false,
         message: "Title, Sub Title, and Image are required",
@@ -77,8 +82,7 @@ const updateExamDetails = async (req, res) => {
 
     // ✅ If a new image is uploaded
     if (req.file) {
-      const BASE_URL =
-        process.env.BASE_URL || `${req.protocol}://${req.get("host")}`;
+      const BASE_URL = "https://9ml67kp8-8000.inc1.devtunnels.ms";
 
       if (req.file) {
         imgPath = `${BASE_URL}/uploads/${req.file.filename}`;
@@ -86,7 +90,7 @@ const updateExamDetails = async (req, res) => {
 
       if (img_url) {
         const oldPath = path.join(
-          __dirname,  
+          __dirname,
           "../../uploads",
           path.basename(img_url)
         );
@@ -136,7 +140,8 @@ const updateExamDetails = async (req, res) => {
 };
 const deleteExamDetails = async (req, res) => {
   try {
-    const { id } = req.body;
+    const id = req.body?.id;
+    console.log("req.body", req.body);
 
     if (!id) {
       return res.status(400).json({
@@ -149,6 +154,8 @@ const deleteExamDetails = async (req, res) => {
 
     return res.status(200).json({
       message: result.message,
+      status: 200,
+      success: true,
     });
   } catch (error) {
     console.error("Error deleting exam details:", error);

@@ -41,8 +41,7 @@ router.post(
 );
 
 // 📤 GET - Fetch all exam details
-router.get("/getExam", adminExamController.getAllExamDetails);
+router.post("/getExam", adminExamController.getAllExamDetails);
 router.post("/deleteExam", adminExamController.deleteExamDetails);
-
 
 module.exports = router;

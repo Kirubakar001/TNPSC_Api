@@ -60,7 +60,7 @@ const updateUser = async (req, res) => {
         district,
         city,
       });
-      console.log(userUpdate);
+      
       if (userUpdate) {
         return res
           .status(200)
