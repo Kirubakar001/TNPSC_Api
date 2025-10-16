@@ -1,7 +1,8 @@
 import DashboardPage from "../pages/dashboard/dashboardPage";
-import SettingsPage from "../pages/settings";
+import Groups from "../pages/group/group";
 import SignIn from "../pages/Auth/signIn/signIn";
 import SignUp from "../pages/Auth/signUp/signUp";
+import SubjectsPage from "../pages/subjects/subjects";
 
 export const ProtectedPages = [
     {
@@ -10,9 +11,14 @@ export const ProtectedPages = [
         element: <DashboardPage />,
     },
     {
-        path: "/settings",
-        title: "Settings",
-        element: <SettingsPage />,
+        path: "/group",
+        title: "Groups",
+        element: <Groups />,
+    },
+    {
+        path: "/subject",
+        title: "Subjects",
+        element: <SubjectsPage />,
     },
 ];
 
