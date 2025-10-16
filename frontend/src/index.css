@@ -28,6 +28,10 @@
         @apply text-3xl font-semibold text-slate-900 transition-colors dark:text-slate-50;
     }
 
+    .text {
+        @apply font-semibold text-slate-900 transition-colors dark:text-slate-50;
+    }
+
     .btn-ghost {
         @apply flex h-10 flex-shrink-0 items-center justify-center gap-x-2 rounded-lg p-2 text-slate-400 transition-colors hover:bg-blue-50 hover:text-slate-500 dark:hover:bg-blue-950 dark:hover:text-slate-300;
     }
