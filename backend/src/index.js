@@ -23,7 +23,12 @@ function getLocalIPAddress() {
 
 const HOST = getLocalIPAddress();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://bqsh4dvr-3000.inc1.devtunnels.ms"],
+    credentials: true,
+  })
+); // Adjust as needed
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
