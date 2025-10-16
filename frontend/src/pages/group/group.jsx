@@ -6,7 +6,7 @@ import { showSuccessToast } from "@/utils/toastHelper";
 import AddButton from "@/components/addButton/addButton";
 import toast from "react-hot-toast";
 import Modal from "../../components/modal";
-import { addGroup, deleteGroup, fetchGroups, updateGroup } from "../../api/groupService";
+import { addGroup, deleteGroup, fetchGroup, updateGroup } from "../../api/groupService";
 import photo from "../../assets/product-image.jpg";
 import GroupForm from "../../UI/group/groupForm";
 
@@ -24,10 +24,10 @@ export default function GroupPage() {
 
     // Fetch all groups on load
     useEffect(() => {
-        const fetchGroup = async () => {
+        const fetchGroups = async () => {
             try {
                 setLoading(true);
-                const response = await fetchGroups();
+                const response = await fetchGroup();
                 if (response.status === 200 && response.success === true) {
                     setGroups(response.data);
                 } else {
@@ -39,7 +39,7 @@ export default function GroupPage() {
                 setLoading(false);
             }
         };
-        fetchGroup();
+        fetchGroups();
     }, []);
 
     // Add or Update Group (Unified handler)
@@ -49,7 +49,7 @@ export default function GroupPage() {
 
             if (!formData) throw new Error("Invalid Subject data");
 
-            const isEditing = Boolean(selectedPart);
+            const isEditing = Boolean(selectedGroup);
             console.log(isEditing);
 
             const payload = new FormData();

@@ -33,9 +33,9 @@ export const navbarLinks = [
                 path: "/subject",
             },
             {
-                label: "Subject 1",
+                label: "Units",
                 icon: Group,
-                path: "/subjects 1",
+                path: "/unit",
             },
             {
                 label: "Subject 2",
