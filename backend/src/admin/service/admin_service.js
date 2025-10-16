@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../../db");
 
 const addAdminUser = async (emp_id, name, password) => {
   const [existing] = await db.query(

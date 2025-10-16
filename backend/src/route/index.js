@@ -1,26 +1,39 @@
-const userRouter = require("./user_router");
-const examRouter = require("./exam_routes");
+const userRouter = require("../app/route/user_router");
+const adminExamRouter = require("../exam_list/route/adminExam_routes");
+const userExamRouter = require("../exam_list/route/userExam_routes");
 const express = require("express");
-const adminRouter = require("./admin_routes");
+const adminRouter = require("../admin/route/admin_routes");
+const adminSubjectRouter = require("../subject_name/route/admin_subject_routes");
+const userSubjectRouter = require("../subject_name/route/user_subject_routes");
 const router = express.Router();
 
 const application = [
+  //App side routes
   {
     path: "/users",
     router: userRouter,
   },
   {
-    path: "/exam",
-    router: examRouter,
+    path: "/examDetails",
+    router: userExamRouter,
   },
-
-
-//admin path
+  {
+    path: "/subjectDetails",
+    router: userSubjectRouter,
+  },
+  // Admin side routes
   {
     path: "/admin",
     router: adminRouter,
-  }
-
+  },
+  {
+    path: "/adminExamDetails",
+    router: adminExamRouter,
+  },
+   {
+    path: "/adminSubject",
+    router: adminSubjectRouter,
+  },
 ];
 
 application.forEach((paths) => {
