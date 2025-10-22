@@ -38,14 +38,14 @@ export const navbarLinks = [
                 path: "/unit",
             },
             {
-                label: "Subject 2",
+                label: "Titles",
                 icon: Group,
-                path: "/subjects 2",
+                path: "/title",
             },
             {
-                label: "Subject 3",
+                label: "Question",
                 icon: Group,
-                path: "/subjects 3",
+                path: "/question",
             },
         ],
     },

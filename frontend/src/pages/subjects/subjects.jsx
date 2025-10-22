@@ -22,7 +22,7 @@ export default function SubjectsPage() {
     const [openFormModal, setOpenFormModal] = useState(false);
     const data = localStorage.getItem("tnpscUser");
     const user = JSON.parse(data);
-    console.log(user);
+    // console.log(user);
 
     useEffect(() => {
         const fetchParts = async () => {
@@ -46,8 +46,6 @@ export default function SubjectsPage() {
 
     const handleFormSubmit = async (formData) => {
         try {
-            console.log("passed here");
-
             if (!formData) throw new Error("Invalid group data");
 
             const isEditing = Boolean(selectedPart);
@@ -115,7 +113,7 @@ export default function SubjectsPage() {
                 toast.error(response.message);
             }
         } catch (error) {
-            toast.error(response.error || `Error in deleting ${selectedPart.id}`);
+            toast.error(response.error || `Error in deleting ${selectedPart.title}`);
         }
     };
 
@@ -151,7 +149,7 @@ export default function SubjectsPage() {
                 </div>
             ) : (
                 <SubjectList
-                    data={parts}
+                    partsData={parts}
                     onEdit={(data) => {
                         setSelectedPart(data);
                         setOpenFormModal(true);
