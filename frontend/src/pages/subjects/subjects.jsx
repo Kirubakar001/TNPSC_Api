@@ -11,11 +11,6 @@ import Modal from "../../components/modal";
 import SubjectForm from "../../UI/subjects/subjectForm";
 
 export default function SubjectsPage() {
-    const subjects = [
-        { id: 1, title: "Subjects 1", subtitle: "CCSE - 1" },
-        { id: 2, title: "Subjects 2", subtitle: "CCSE - 2" },
-        { id: 4, title: "Subjects 3", subtitle: "CCSE - 3" },
-    ];
     const [parts, setParts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -25,6 +20,9 @@ export default function SubjectsPage() {
 
     // Add/Edit Modal
     const [openFormModal, setOpenFormModal] = useState(false);
+    const data = localStorage.getItem("tnpscUser");
+    const user = JSON.parse(data);
+    console.log(user);
 
     useEffect(() => {
         const fetchParts = async () => {
@@ -58,7 +56,8 @@ export default function SubjectsPage() {
             const payload = new FormData();
 
             payload.append("title", formData.title);
-            payload.append("exam_id", formData.exam_id);
+            // payload.append("exam_id", formData.exam_id || 1);
+            payload.append("user_id", user.emp_id);
 
             // Handle image upload logic
             if (isEditing) {
@@ -80,7 +79,7 @@ export default function SubjectsPage() {
                 response = await addPart(payload);
             }
 
-            if (response.status === 200 || response.success) {
+            if (response.status === 201 || (response.status === 200 && response.success === true)) {
                 console.log(response.data);
 
                 const updatedData = response.data;
@@ -106,8 +105,9 @@ export default function SubjectsPage() {
 
     const confirmDelete = async () => {
         try {
-            const response = await deletePart({ id: selectedPart.id });
+            const response = await deletePart({ id: selectedPart.id, user_id: user.emp_id });
             if (response.status === 200 && response.success === true) {
+                setParts((prev) => prev.filter((data) => data.id !== selectedPart.id));
                 showSuccessToast(`${selectedPart.title} deleted successfully !!`);
                 setOpenDialog(false);
                 setSelectedPart(null);
@@ -130,24 +130,33 @@ export default function SubjectsPage() {
             {loading ? (
                 <LoadingSpinner message={"Loading Parts..."} />
             ) : parts.length === 0 ? (
-                <div className="py-12 text-center">
-                    <img
-                        src={photo}
-                        alt="No Data"
-                        className="mx-auto h-20 w-20 opacity-70"
-                    />
-                    <p className="mt-2 text-gray-500">No Parts Found. Click “Add Part” to get started.</p>
+                <div className="m-5 flex w-full justify-center">
+                    <div className="card w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-md dark:bg-slate-900">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="flex h-32 w-32 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                                <img
+                                    src={photo}
+                                    alt="No Data"
+                                    className="h-16 w-16 opacity-80"
+                                />
+                            </div>
+                            <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-200">No Groups Found</h3>
+                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                It looks like there are no units created yet.
+                                <br />
+                                Click <span className="font-medium text-green-600 dark:text-green-400">Add Units</span> to get started.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <SubjectList
-                    parts={parts}
+                    data={parts}
                     onEdit={(data) => {
                         setSelectedPart(data);
                         setOpenFormModal(true);
                     }}
                     onDelete={(data) => {
-                        console.log("yes i am here", data);
-
                         setSelectedPart(data);
                         setOpenDialog(true);
                     }}

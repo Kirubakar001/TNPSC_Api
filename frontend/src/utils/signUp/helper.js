@@ -1,4 +1,4 @@
-import { signUp } from "@/service/authService";
+import { signUp } from "@/api/authService";
 
 export const validateForm = (form) => {
     const errors = {};
@@ -30,7 +30,7 @@ export const handleSignUp = async (form, navigate, toast, setForm, initialFormSt
             navigate("/signin");
         }
     } catch (err) {
-        toast.error(err.response?.data?.message || "Sign up failed");
+        // toast.error(err.response?.data?.message || "Sign up failed");
         setForm(initialFormState);
     }
 };

@@ -1,10 +1,10 @@
 import api from "./apiConfig";
 
-export const fetchGroups = async (credentials) => {
+export const fetchGroup = async (credentials) => {
     try {
         const response = await api.post("/adminExamDetails/getExam", credentials);
-        if(response.status === 200 ){
-        return response.data;
+        if (response.status === 200) {
+            return response.data;
         }
     } catch (error) {
         throw error;
@@ -12,8 +12,6 @@ export const fetchGroups = async (credentials) => {
 };
 
 export const addGroup = async (credentials) => {
-    console.log("credentials",credentials);
-    
     try {
         const response = await api.post("/adminExamDetails/insertExam", credentials);
         return response.data;
