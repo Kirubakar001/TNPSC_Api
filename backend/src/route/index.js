@@ -9,8 +9,9 @@ const adminUnit = require("../unit/route/admin_unit_routes");
 const userUnit = require("../unit/route/user_unit_routes");
 const admintitlerUnit = require("../title/route/admin_title_routes");
 const usertitleUnit = require("../title/route/user_title_routes");
-const userQuestion  = require("../question/route/user_question_routes");
+const userQuestion = require("../question/route/user_question_routes");
 const adminQuestion = require("../question/route/admin_question_routes");
+const userBookMark = require("../exam_details/route/user_exam_details_routes");
 const router = express.Router();
 
 const application = [
@@ -38,6 +39,10 @@ const application = [
   {
     path: "/question",
     router: userQuestion,
+  },
+  {
+    path: "/examPractice",
+    router: userBookMark,
   },
 
   // Admin side routes
