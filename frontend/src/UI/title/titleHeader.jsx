@@ -1,11 +1,11 @@
 import { useState } from "react";
 import AddButton from "@/components/addButton/addButton";
 
-export default function UnitsHeader({ partsData = [], onClick, onSelectPart }) {
+export default function TitleHeader({ unitsData = [], onClick, onSelectUnit }) {
     const handleSelectChange = (e) => {
         const selectedId = e.target.value;
-        if (onSelectPart) {
-            onSelectPart(selectedId);
+        if (onSelectUnit) {
+            onSelectUnit(selectedId);
         }
     };
 
@@ -18,7 +18,7 @@ export default function UnitsHeader({ partsData = [], onClick, onSelectPart }) {
                 onChange={handleSelectChange}
             >
                 <option value="all">All Units</option>
-                {partsData.map((data, index) => (
+                {unitsData.map((data, index) => (
                     <option
                         key={index}
                         value={data.id}
@@ -30,7 +30,7 @@ export default function UnitsHeader({ partsData = [], onClick, onSelectPart }) {
 
             {/* Add button on the right */}
             <AddButton
-                label="Add Units"
+                label="Add Titles"
                 onClick={onClick}
                 theme="green"
             />

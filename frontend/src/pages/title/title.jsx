@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import photo from "../../assets/product-image.jpg";
-import UnitsHeader from "@/UI/units/unitHeader";
+import TitleHeader from "@/UI/title/titleHeader";
 import LoadingSpinner from "@/components/loading/loadingSpinner";
-import UnitList from "../../UI/units/unitList";
 import toast from "react-hot-toast";
-import { fetchUnits } from "@/api/unitService";
 import ConfirmDialog from "../../components/deleteModal/deleteModal";
-import { addUnit, deleteUnit, updateUnit } from "../../api/unitService";
+import { addTitle, deleteTitle, fetchTitles, updateTitle } from "../../api/titleService";
 import Modal from "../../components/modal";
-import UnitForm from "../../UI/units/unitForm";
 import { showSuccessToast } from "@/utils/toastHelper";
+import TitleList from "../../UI/title/titleList";
+import TitleForm from "../../UI/title/titleForm";
 
-export default function UnitsPage() {
-    const [part, setPart] = useState([]);
+export default function TitlePage() {
+    const [title, setTitle] = useState([]);
     const [units, setUnits] = useState([]);
     const [loading, setLoading] = useState(true);
     //user
@@ -20,21 +19,21 @@ export default function UnitsPage() {
     const user = JSON.parse(data);
     //Delete units
     const [openDialog, setOpenDialog] = useState(false);
-    const [selectedUnit, setSelectedUnit] = useState(null);
+    const [selectedTitle, setSelectedTitle] = useState(null);
 
     //Add or Edit units
     const [openFormModal, setOpenFormModal] = useState(false);
 
     useEffect(() => {
-        const fetchUnit = async () => {
+        const fetchTitle = async () => {
             try {
                 setLoading(true);
-                const response = await fetchUnits();
+                const response = await fetchTitles();
                 // console.log(response);
 
                 if (response.status === 200 && response.success === true) {
-                    setUnits(response.data);
-                    setPart(response.partData);
+                    setTitle(response.data);
+                    setUnits(response.unitData);
                 } else toast.error(response.message);
             } catch (error) {
                 toast.error(error.message || "Something went wrong ❌");
@@ -42,24 +41,24 @@ export default function UnitsPage() {
                 setLoading(false);
             }
         };
-        fetchUnit();
+        fetchTitle();
     }, []);
 
-    const handlePartSelect = async (id) => {
+    const handleUnitSelect = async (id) => {
         try {
             setLoading(true);
             const payload = {};
             if (id !== "all") {
-                payload.part_id = id;
+                payload.unit_id = id;
             }
-            const response = await fetchUnits(payload);
+            const response = await fetchTitles(payload);
             if (response.status === 200 && response.success === true) {
-                setUnits(response.data);
+                setTitle(response.data);
             } else {
                 toast.error(response.message);
             }
         } catch (error) {
-            setUnits([]);
+            setTitle([]);
             toast.error("No units Found");
         } finally {
             setLoading(false);
@@ -68,52 +67,54 @@ export default function UnitsPage() {
 
     const confirmDelete = async () => {
         try {
-            console.log(selectedUnit);
+            console.log(selectedTitle);
 
-            const response = await deleteUnit({ id: selectedUnit.id, part_id: selectedUnit.exam_parts_id, user_id: user.emp_id });
+            const response = await deleteTitle({ id: selectedTitle.id, part_id: selectedTitle.exam_parts_id, user_id: user.emp_id });
             if (response.status === 200 && response.success === true) {
-                setUnits((prev) => prev.filter((data) => data.id !== selectedUnit.id));
-                showSuccessToast(`${selectedUnit.title} deleted successfully !!`);
+                setTitle((prev) => prev.filter((data) => data.id !== selectedTitle.id));
+                showSuccessToast(`${selectedTitle.title} deleted successfully !!`);
                 setOpenDialog(false);
-                setSelectedUnit(null);
+                setSelectedTitle(null);
             } else {
                 toast.error(response.error);
             }
         } catch (error) {
-            toast.error(`Error in deleting ${selectedUnit.title}` || error.message);
+            toast.error(`Error in deleting ${selectedTitle.title}` || error.message);
         }
     };
 
     const handleFormSubmit = async (formData) => {
         try {
-            console.log("units form ==>> ", formData);
+            console.log("title form ==>> ", formData);
 
             if (!formData) throw new Error("Invalid group data");
 
-            const isEditing = Boolean(selectedUnit);
+            const isEditing = Boolean(selectedTitle);
             console.log(isEditing);
 
             let response;
             if (isEditing) {
                 console.log("edit passed");
-                
-                response = await updateUnit({ title: formData.title, part_id: formData.part_id, user_id: user.emp_id, id: formData.id });
+
+                response = await updateTitle({ title: formData.title, unit_id: formData.unit_id, user_id: user.emp_id, id: formData.id });
             } else {
                 console.log("add passed");
-                
-                response = await addUnit({ title: formData.title, part_id: formData.part_id, user_id: user.emp_id });
+
+                response = await addTitle({ title: formData.title, unit_id: formData.unit_id, user_id: user.emp_id });
             }
 
             if (response.status === 200 && response.success === true) {
+                console.log("response",response.data);
+                
                 const updatedData = response.data;
                 if (isEditing) {
-                    setUnits((prev) => prev.map((data) => (data.id === selectedUnit.id ? updatedData : data)));
+                    setTitle((prev) => prev.map((data) => (data.id === selectedTitle.id ? updatedData : data)));
                     showSuccessToast(`${updatedData.title} updated successfully!`);
                 } else {
-                    setUnits((prev) => [...prev, updatedData]);
+                    setTitle((prev) => [...prev, updatedData]);
                     showSuccessToast(`${updatedData.title} added successfully!`);
                 }
-                setSelectedUnit(null);
+                setSelectedTitle(null);
                 setOpenFormModal(false);
             } else {
                 throw new Error(response.message || "Failed to save group");
@@ -126,16 +127,16 @@ export default function UnitsPage() {
     return (
         <>
             <div>
-                <p className="title mb-5 text-center">Units</p>
-                <UnitsHeader
-                    partsData={part}
+                <p className="title mb-5 text-center">Titles</p>
+                <TitleHeader
+                    unitsData={units}
                     onClick={() => setOpenFormModal(true)}
-                    onSelectPart={handlePartSelect}
+                    onSelectUnit={handleUnitSelect}
                 />
 
                 {loading ? (
                     <LoadingSpinner message={"Loading Units...."} />
-                ) : units.length === 0 ? (
+                ) : title.length === 0 ? (
                     <div className="m-5 flex w-full justify-center">
                         <div className="card w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-md dark:bg-slate-900">
                             <div className="flex flex-col items-center justify-center">
@@ -146,24 +147,24 @@ export default function UnitsPage() {
                                         className="h-16 w-16 opacity-80"
                                     />
                                 </div>
-                                <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-200">No Units Found</h3>
+                                <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-200">No Titles Found</h3>
                                 <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                    It looks like there are no units created yet.
+                                    It looks like there are no Titles created yet.
                                     <br />
-                                    Click <span className="font-medium text-green-600 dark:text-green-400">Add Units</span> to get started.
+                                    Click <span className="font-medium text-green-600 dark:text-green-400">Add Titles</span> to get started.
                                 </p>
                             </div>
                         </div>
                     </div>
                 ) : (
-                    <UnitList
-                        unitsData={units}
+                    <TitleList
+                        titleData={title}
                         onEdit={(data) => {
-                            setSelectedUnit(data);
+                            setSelectedTitle(data);
                             setOpenFormModal(true);
                         }}
                         onDelete={(data) => {
-                            setSelectedUnit(data);
+                            setSelectedTitle(data);
                             setOpenDialog(true);
                         }}
                     />
@@ -177,7 +178,7 @@ export default function UnitsPage() {
                     title="Confirm Deletion"
                     message={
                         <p className="card-title text-center font-semibold text-gray-700">
-                            Are you sure you want to delete <span className="font-semibold text-red-500">{selectedUnit?.title}</span>?
+                            Are you sure you want to delete <span className="font-semibold text-red-500">{selectedTitle?.title}</span>?
                         </p>
                     }
                 />
@@ -186,16 +187,16 @@ export default function UnitsPage() {
                 <Modal
                     open={openFormModal}
                     onClose={() => {
-                        setSelectedUnit(null);
+                        setSelectedTitle(null);
                         setOpenFormModal(false);
                     }}
-                    title={selectedUnit ? "Edit Unit" : "Add New Unit"}
+                    title={selectedTitle ? "Edit Unit" : "Add New Unit"}
                 >
-                    <UnitForm
-                        initialData={selectedUnit}
-                        partsData={part}
+                    <TitleForm
+                        initialData={selectedTitle}
+                        unitsData={units}
                         onClose={() => {
-                            setSelectedUnit(null);
+                            setSelectedTitle(null);
                             setOpenFormModal(false);
                         }}
                         onSubmit={handleFormSubmit}

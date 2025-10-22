@@ -1,12 +1,15 @@
 import { CircleX, Pencil } from "lucide-react";
 
-export default function UnitCard({ data, onEdit, onDelete }) {
+export default function TitleCard({ data, onEdit, onDelete }) {
     return (
         <>
-            <div className="card overflow-hidden rounded w-full bg-white shadow-md dark:bg-slate-900">
-                <div className="items-center flex justify-between">
-                    <div className="rounded-xl bg-slate-100 p-3 text-center dark:bg-slate-950">
-                        <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">{data.title}</p>
+            <div className="card w-full overflow-hidden rounded bg-white shadow-md dark:bg-slate-900">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-baseline gap-3">
+                        <div className="rounded-xl bg-slate-100 p-3 text-center dark:bg-slate-950">
+                            <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">{data.title}</p>
+                        </div>
+                            <p className="text font-semibold">Total Count : {data.ques_count}</p>
                     </div>
                     <div className="mt-3 flex items-center gap-4">
                         <div
