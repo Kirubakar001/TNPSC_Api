@@ -3,7 +3,7 @@ const db = require("../../db");
 const getAllTitle = async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT id,exam_parts_id,units_id,ques_count,title FROM title"
+      "SELECT id,unit_id,ques_count,title FROM title"
     );
     return rows;
   } catch (error) {

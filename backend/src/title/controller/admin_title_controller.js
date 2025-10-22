@@ -1,72 +1,108 @@
 const adminSubjectService = require("../service/admin_title_service");
 
-const insertTitle = async (req, res) => {
+const adminUnitService = require("../../unit/service/admin_unit_service");
+
+const getAllTitles = async (req, res) => {
   try {
-    const { exam_parts_id, units_id, title, cby } = req.body;
-    if (!exam_parts_id || !units_id || !title) {
+    let { unit_id } = req.body || {};
+    const unitId = parseInt(unit_id ?? 0, 10);
+
+    let data = [];
+    let unitData = [];
+
+    if (unitId !== 0) {
+      data = await adminSubjectService.getById(unitId);
+    } else {
+      [data, unitData] = await Promise.all([
+        adminSubjectService.getAllTitles(),
+        adminUnitService.getAllUnits(),
+      ]);
+    }
+
+    if (!data || data.length === 0) {
       return res
-        .status(400)
-        .json({ success: false, message: "Missing fields" });
+        .status(204)
+        .json({ status: 204, success: false, message: "No titles found" });
     }
 
-    let img = "";
-    if (req.file) {
-      img = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    }
-
-    const id = await adminSubjectService.insertTitle(
-      exam_parts_id,
-      units_id,
-      title,
-      img,
-      cby
-    );
-    res.status(201).json({ success: true, message: "Title added", data: id });
+    res.status(200).json({
+      status: 200,
+      success: true,
+      data: data,
+      unitData: unitData,
+      message: "Titles fetched successfully",
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-const getAllTitles = async (req, res) => {
+const insertTitle = async (req, res) => {
   try {
-    const data = await adminSubjectService.getAllTitle();
-    res.status(200).json({ success: true, data: data });
+    const { unit_id, title, cby } = req.body;
+    if (!unit_id || !title) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing fields" });
+    }
+
+    const data = await adminSubjectService.insertTitle(unit_id, title, cby);
+    res
+      .status(201)
+      .json({ status: 200, success: true, message: "Title added", data: data });
   } catch (error) {
+    console.log("error insert title ", error);
+
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const updateTitle = async (req, res) => {
   try {
-    const { id, title, uby, img_url } = req.body;
+    const { id, title, uby, unit_id } = req.body;
+    console.log("update data ", req.body);
     if (!id) {
       return res.status(400).json({ success: false, message: "ID required" });
     }
-
-    let img = img_url;
-    if (req.file) {
-      img = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    if (!title) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Title required" });
     }
 
-    const updated = await adminSubjectService.updateTitle(id, title, img, uby);
-    res
-      .status(200)
-      .json({ success: true, message: "Updated successfully", updated });
+    const updated = await adminSubjectService.updateTitle(
+      id,
+      title,
+      uby,
+      unit_id
+    );
+    if (!updated) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Data Not Updatad" });
+    }
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Updated successfully",
+      data: updated,
+    });
   } catch (error) {
+    console.log("error update title ", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const deleteTitle = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, user_id } = req.body;
     if (!id)
       return res.status(400).json({ success: false, message: "ID required" });
 
-    const deleted = await adminSubjectService.deleteTitle(id);
+    const deleted = await adminSubjectService.deleteTitle(id, user_id);
     res
       .status(200)
-      .json({ success: true, message: "Deleted successfully", deleted });
+      .json({ status: 200, success: true, message: "Deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

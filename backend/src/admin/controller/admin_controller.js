@@ -23,6 +23,7 @@ const addAdmin = async (req, res) => {
 
     return res.status(201).json({
       status: 200,
+
       message: result.message,
       success: true,
     });
@@ -88,7 +89,7 @@ const updateAdmin = async (req, res) => {
 
     // 4️⃣ Return success + updated data
     return res.status(200).json({
-        status: 200,
+      status: 200,
       message: result.message,
       updatedAdmin: result.data,
     });
@@ -108,6 +109,7 @@ const loginAdmin = async (req, res) => {
     if (!emp_id || !password) {
       return res.status(400).json({
         success: false,
+        message: "emp_id and password are required",
         error: "emp_id and password are required",
       });
     }
@@ -115,18 +117,21 @@ const loginAdmin = async (req, res) => {
     const allData = await adminService.checkadminUser(emp_id);
 
     if (!allData) {
-      return res
-        .status(404)
-        .json({ error: "User not found", message: "User not found", data: {} });
+      return res.status(400).json({
+        status: 200,
+        success: false,
+        error: "User not found",
+        message: "User not found",
+      });
     }
 
     // Compare password directly (plain-text)
     if (password !== allData.password) {
       return res.status(401).json({
+        //     status: 200,
         success: false,
-        msg: "Invalid password",
+        error: "Invalid password",
         message: "Invalid password",
-        data: {},
       });
     }
 

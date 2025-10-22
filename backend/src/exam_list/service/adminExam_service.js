@@ -2,7 +2,7 @@ const db = require("../../db");
 
 const getExamDetails = async (req, res) => {
   try {
-      const [rows] = await db.query("SELECT * FROM exam");
+    const [rows] = await db.query("SELECT * FROM exam");
     return rows;
   } catch (error) {
     throw new Error("Error fetching exam details: " + error.message);
@@ -17,12 +17,11 @@ const insertExamDetails = async (title, sub_title, img) => {
     );
 
     // Get inserted record details using insertId
-    const [newExam] = await db.query(
-      "SELECT * FROM exam WHERE id = ?",
-      [result.insertId]
-    );
+    const [newExam] = await db.query("SELECT * FROM exam WHERE id = ?", [
+      result.insertId,
+    ]);
 
-    return newExam[0];
+    return newExam;
   } catch (error) {
     throw new Error("Error inserting exam details: " + error.message);
   }
@@ -39,18 +38,13 @@ const updateExamDetails = async (id, title, sub_title, img) => {
   if (result.affectedRows === 0) return null;
 
   // return updated row
-  const [rows] = await db.query(`SELECT * FROM exam WHERE id = ?`, [
-    id,
-  ]);
+  const [rows] = await db.query(`SELECT * FROM exam WHERE id = ?`, [id]);
   return rows[0];
 };
 
 const deleteExamDetails = async (id) => {
   try {
-    const [result] = await db.query(
-      "DELETE FROM exam WHERE id = ?",
-      [id]
-    );
+    const [result] = await db.query("DELETE FROM exam WHERE id = ?", [id]);
 
     if (result.affectedRows === 0) {
       throw new Error("Exam not found");

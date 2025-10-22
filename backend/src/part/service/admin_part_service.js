@@ -8,20 +8,20 @@ const getParts = async () => {
   } catch (error) {
     throw new Error("Error fetching subjects: " + error.message);
   }
-};
+}; 
 
 // ✅ Insert new part
-const insertPart = async (exam_id, title, img) => {
+const insertPart = async (title, img) => {
   try {
     const [result] = await db.query(
-      "INSERT INTO exam_parts (exam_id, title, img, created_at, updated_at, cby, uby) VALUES (?, ?, ?, NOW(), NOW(), ?, ?)",
-      [exam_id, title, img, "admin", "admin"]
+      "INSERT INTO exam_parts ( title, img, created_at, updated_at, cby, uby) VALUES (  ?, ?, NOW(), NOW(), ?, ?)",
+      [title, img, "admin", "admin"]
     );
 
     const [newData] = await db.query("SELECT * FROM exam_parts WHERE id = ?", [
       result.insertId,
     ]);
-    return newData ;
+    return newData[0];
   } catch (error) {
     throw new Error("Error inserting part: " + error.message);
   }
@@ -36,11 +36,13 @@ const updatePart = async (id, title, img) => {
       "UPDATE exam_parts SET title = ?, img = ?, updated_at = NOW(), uby = ? WHERE id = ?",
       [title, img, "admin", id]
     );
-    
+    console.log("result", result);
     // return updated row
-    const [rows] = await db.query(`SELECT * FROM exam WHERE id = ?`, [id]);
+    const [rows] = await db.query(`SELECT * FROM exam_parts WHERE id = ?`, [
+      id,
+    ]);
     console.log("result update", rows);
-    return rows;
+    return rows[0];
 
     // return result.affectedRows > 0;
   } catch (error) {
@@ -64,5 +66,5 @@ module.exports = {
   getParts,
   insertPart,
   updatePart,
-  deletePart,
+  deletePart, 
 };

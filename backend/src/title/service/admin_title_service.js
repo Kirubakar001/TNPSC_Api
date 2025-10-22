@@ -2,31 +2,55 @@ const db = require("../../db");
 
 // Get All Titles
 const getAllTitles = async () => {
-  const [rows] = await db.query("SELECT * FROM title ORDER BY created_at DESC");
+  const [rows] = await db.query("SELECT * FROM title where active = 1");
+  return rows;
+};
+
+const getById = async (unitId) => {
+  const [rows] = await db.query(
+    "SELECT * FROM title where unit_id = ? AND active = 1",
+    [unitId]
+  );
   return rows;
 };
 
 // Create Title
-const insertTitle = async (exam_parts_id,units_id, title, img, cby) => {
+const insertTitle = async (unitId, title, cby) => {
   const [result] = await db.query(
-    "INSERT INTO title (exam_parts_id, units_id, title, img, cby) VALUES (?, ?, ?, ?, ?)",
-    [exam_parts_id, units_id, title, img, cby]
+    "INSERT INTO title ( unit_id, title,  cby) VALUES ( ?, ?, ?)",
+    [unitId, title, cby]
   );
-  return result;
+
+  const [rows] = await db.query("SELECT * FROM title WHERE id = ?", [
+    result.insertId,
+  ]);
+
+  return rows[0];
 };
 
 // Update Title
-const updateTitle = async (id, title, img, uby) => {
+const updateTitle = async (id, title, uby, unit_id) => {
   const [result] = await db.query(
-    "UPDATE title SET title = ?, img = ?, uby = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-    [title, img, uby, id]
+    "UPDATE title SET title = ?,  uby = ?, updated_at = CURRENT_TIMESTAMP, unit_id =? WHERE id = ?",
+    [title, uby, unit_id, id]
   );
-  return result.affectedRows;
+
+  if (result.affectedRows === 0) return null;
+
+  const [rows] = await db.query("SELECT * FROM title WHERE id = ?", [id]);
+  return rows[0];
 };
 
 // Delete Title
-const deleteTitle = async (id) => {
-  const [result] = await db.query("DELETE FROM title WHERE id = ?", [id]);
+const deleteTitle = async (id,uby) => {
+  //const [result] = await db.query("DELETE FROM title WHERE id = ?", [id]);
+
+  const [result] = await db.query(
+    "UPDATE title SET active = 0,   uby = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+    [uby, id]
+  );
+
+  if (result.affectedRows === 0) return null;
   return result.affectedRows;
 };
 
@@ -35,4 +59,5 @@ module.exports = {
   getAllTitles,
   updateTitle,
   deleteTitle,
+  getById,
 };

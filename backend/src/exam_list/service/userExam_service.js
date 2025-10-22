@@ -1,6 +1,6 @@
 const db = require("../../db");
 
-const getAllExamDetails = async (req, res) => {
+const getAllExamDetails = async ( userId ) => {
   try {
     const [rows] = await db.query(
       "SELECT id,title,sub_title,img FROM exam"

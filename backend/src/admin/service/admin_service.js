@@ -21,16 +21,11 @@ const addAdminUser = async (emp_id, name, password) => {
     [emp_id, name, password, "admin", name, "kirubakar"]
   );
 
-  // ✅ After insertion, fetch the inserted row details
-  const [rows] = await db.query(
-    `SELECT id, emp_id, name, admin_role, cby, created_at 
-     FROM admin WHERE id = ?`,
-    [result.insertId]
-  );
+ 
   return {
     success: true,
     message: "Admin added successfully",
-    data: rows[0],
+    data: result,
   };
 };
 

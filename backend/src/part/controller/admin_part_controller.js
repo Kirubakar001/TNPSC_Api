@@ -27,13 +27,13 @@ const getAllParts = async (req, res) => {
 // 📥 Insert new part
 const insertPart = async (req, res) => {
   try {
-    const { exam_id, title } = req.body;
-    console.log("request", req.body);
+    const { title } = req.body;
+    console.log("request data", req.body);
 
-    if (!exam_id || !title || !req.file) {
+    if (!title || !req.file) {
       return res.status(400).json({
         success: false,
-        message: "Exam ID, Title, and Image are required",
+        message: "  Title, and Image are required",
       });
     }
 
@@ -41,11 +41,12 @@ const insertPart = async (req, res) => {
 
     const imgUrl = `${BASE_URL}/uploads/${req.file.filename}`;
 
-    const data = await adminSubjectService.insertPart("1", title, imgUrl);
+    const data = await adminSubjectService.insertPart(title, imgUrl);
+    console.log("inserted data", data);
     res.status(201).json({
       status: 200,
       success: true,
-      data,
+      data: data,
       message: "Part added successfully",
     });
   } catch (error) {
@@ -57,14 +58,20 @@ const insertPart = async (req, res) => {
 // ✏️ Update part
 const updatePart = async (req, res) => {
   try {
-    const { id, title, img } = req.body;
+    const { id, title, img_url } = req.body;
     console.log("update req body", req.body);
 
-    let imgUrl = img;
+    let imgUrl = img_url;
     if (req.file) {
       const BASE_URL = "https://9ml67kp8-8000.inc1.devtunnels.ms";
 
       imgUrl = `${BASE_URL}/uploads/${req.file.filename}`;
+    }
+
+    if (!imgUrl) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Image is required" });
     }
 
     const updatedPart = await adminSubjectService.updatePart(id, title, imgUrl);
@@ -73,6 +80,7 @@ const updatePart = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Part not found" });
 
+    console.log("updated part", updatedPart);
     res.status(200).json({
       status: 200,
       success: true,
@@ -89,6 +97,7 @@ const updatePart = async (req, res) => {
 const deletePart = async (req, res) => {
   try {
     const { id } = req.body;
+    console.log("delete req body", req.body);
     const success = await adminSubjectService.deletePart(id);
     if (!success)
       return res

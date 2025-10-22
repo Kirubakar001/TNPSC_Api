@@ -2,10 +2,16 @@ const userExamService = require("../service/userExam_service");
 
 const getAllExamDetails = async (req, res) => {
   try {
-    console.log("enter to exam");
-    const details = await userExamService.getAllExamDetails();
-    console.log(details);
+    const userId = "11";
 
+    if (!userId) {
+      return res.status(400).json({
+        status: "false",
+        data: [],
+        message: "User Id is Missing",
+      });
+    }
+    const details = await userExamService.getAllExamDetails(userId);
     if (!details || details.length === 0) {
       return res.status(200).json({
         status: "success",
