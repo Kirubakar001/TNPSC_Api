@@ -1,4 +1,4 @@
-import { signIn } from "@/service/authService";
+import { signIn } from "@/api/authService";
 
 export const validateForm = (form) => {
     const newErrors = {};
@@ -17,14 +17,13 @@ export const handleSignIn = async (form, setForm, toast, navigate, initialFormSt
         console.log(response);
 
         if (response.status === 200) {
-            console.log("passed");
             toast.success(response.message, "!!!");
-            localStorage.setItem("authToken", JSON.stringify(response.data));
+            localStorage.setItem("tnpscUser", JSON.stringify(response.data));
             setForm(initialFormState);
             navigate("/");
         }
     } catch (err) {
+        setForm(initialFormState);  
         toast.error(err.response.data.message || "Login failed");
-        setForm(initialFormState);
     }
 };

@@ -1,10 +1,10 @@
 import SubjectCard from "./subjectCard";
 
-export default function SubjectList({ parts, onEdit, onDelete }) {
+export default function SubjectList({ data, onEdit, onDelete }) {
     return (
         <>
             <div className="flex flex-wrap justify-center gap-4">
-                {parts.map((data) => (
+                {data.map((data) => (
                     <SubjectCard
                         key={data.id}
                         data={data}

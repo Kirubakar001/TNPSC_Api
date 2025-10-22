@@ -7,8 +7,8 @@ import { Footer } from "../../components/footer";
 
 const DashboardPage = () => {
     const { theme } = useTheme();
-    const data = localStorage.getItem("authToken");
-    console.log("authToken", data);
+    const data = localStorage.getItem("tnpscUser");
+    console.log("tnpscUser", data);
 
     return (
         <div className="flex flex-col gap-y-4">

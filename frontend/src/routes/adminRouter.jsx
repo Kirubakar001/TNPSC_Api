@@ -3,6 +3,7 @@ import Groups from "../pages/group/group";
 import SignIn from "../pages/Auth/signIn/signIn";
 import SignUp from "../pages/Auth/signUp/signUp";
 import SubjectsPage from "../pages/subjects/subjects";
+import UnitsPage from "../pages/units/units";
 
 export const ProtectedPages = [
     {
@@ -19,6 +20,11 @@ export const ProtectedPages = [
         path: "/subject",
         title: "Subjects",
         element: <SubjectsPage />,
+    },
+    {
+        path: "/unit",
+        title: "Units",
+        element: <UnitsPage />,
     },
 ];
 
