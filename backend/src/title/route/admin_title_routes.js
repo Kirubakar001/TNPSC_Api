@@ -27,8 +27,8 @@ const upload = multer({ storage });
 
 // Routes
 router.post("/list", adminSubjectController.getAllTitles);
-router.post("/insert", upload.single("img"), adminSubjectController.insertTitle);
-router.post("/update", upload.single("img"), adminSubjectController.updateTitle);
+router.post("/insert", adminSubjectController.insertTitle);
+router.post("/update", adminSubjectController.updateTitle);
 router.post("/delete", adminSubjectController.deleteTitle);
 
 module.exports = router;

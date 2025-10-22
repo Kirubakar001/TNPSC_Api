@@ -22,7 +22,7 @@ const getAllTitle = async (req, res) => {
     console.error("Error fetching title details:", error);
     res
       .status(500)
-      .json({ status: "failure", message: "Internal Server Error" });
+      .json({ status: "failure", message: "Internal Server Error" ,error :error });
   }
 };
 

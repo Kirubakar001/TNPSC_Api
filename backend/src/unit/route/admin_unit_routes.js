@@ -26,9 +26,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes
-router.post("/insert", upload.single("img"), adminSubjectController.insertUnit);
-router.get("/list", adminSubjectController.getAllUnits);
-router.post("/update", upload.single("img"), adminSubjectController.updateUnit);
+router.post("/insert",   adminSubjectController.insertUnit);
+router.post("/list", adminSubjectController.getAllUnits);
+router.post("/update",  adminSubjectController.updateUnit);
 router.post("/delete", adminSubjectController.deleteUnit);
 
 module.exports = router;
