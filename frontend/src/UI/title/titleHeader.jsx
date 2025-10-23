@@ -17,7 +17,7 @@ export default function TitleHeader({ unitsData = [], onClick, onSelectUnit }) {
                 defaultValue=""
                 onChange={handleSelectChange}
             >
-                <option value="all">All Units</option>
+                <option value="all">All Title</option>
                 {unitsData.map((data, index) => (
                     <option
                         key={index}

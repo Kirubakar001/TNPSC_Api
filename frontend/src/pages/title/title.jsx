@@ -11,32 +11,35 @@ import TitleList from "../../UI/title/titleList";
 import TitleForm from "../../UI/title/titleForm";
 
 export default function TitlePage() {
-    const [title, setTitle] = useState([]);
-    const [units, setUnits] = useState([]);
+    const [title, setTitle] = useState([]); // master list
+    const [filteredTitles, setFilteredTitles] = useState([]); // derived filtered list
+    const [units, setUnits] = useState([]); //sub list
     const [loading, setLoading] = useState(true);
-    //user
+    const [selectedUnitId, setSelectedUnitId] = useState("all");
+
     const data = localStorage.getItem("tnpscUser");
     const user = JSON.parse(data);
-    //Delete units
+
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedTitle, setSelectedTitle] = useState(null);
-
-    //Add or Edit units
     const [openFormModal, setOpenFormModal] = useState(false);
 
+    // Fetch all titles and units once
     useEffect(() => {
         const fetchTitle = async () => {
             try {
                 setLoading(true);
                 const response = await fetchTitles();
-                // console.log(response);
 
                 if (response.status === 200 && response.success === true) {
                     setTitle(response.data);
-                    setUnits(response.unitData);
+                    setFilteredTitles(response.data);
+                    setUnits(response.unitData || []);
                 } else toast.error(response.message);
             } catch (error) {
                 toast.error(error.message || "Something went wrong ❌");
+                setTitle([]);
+                setFilteredTitles([]);
             } finally {
                 setLoading(false);
             }
@@ -44,165 +47,180 @@ export default function TitlePage() {
         fetchTitle();
     }, []);
 
-    const handleUnitSelect = async (id) => {
-        try {
-            setLoading(true);
-            const payload = {};
-            if (id !== "all") {
-                payload.unit_id = id;
-            }
-            const response = await fetchTitles(payload);
-            if (response.status === 200 && response.success === true) {
-                setTitle(response.data);
-            } else {
-                toast.error(response.message);
-            }
-        } catch (error) {
-            setTitle([]);
-            toast.error("No units Found");
-        } finally {
-            setLoading(false);
+    // Filter logic — re-run when either title data or selected unit changes
+    useEffect(() => {
+        if (selectedUnitId === "all") {
+            setFilteredTitles(title);
+        } else {
+            const idNum = Number(selectedUnitId);
+            setFilteredTitles(title.filter((item) => Number(item.unit_id) === idNum));
         }
+    }, [title, selectedUnitId]);
+
+    const handleUnitSelect = (id) => {
+        setSelectedUnitId(id ?? "all");
     };
 
     const confirmDelete = async () => {
         try {
-            console.log(selectedTitle);
+            const response = await deleteTitle({
+                id: selectedTitle.id,
+                user_id: user.emp_id,
+            });
 
-            const response = await deleteTitle({ id: selectedTitle.id, part_id: selectedTitle.exam_parts_id, user_id: user.emp_id });
             if (response.status === 200 && response.success === true) {
                 setTitle((prev) => prev.filter((data) => data.id !== selectedTitle.id));
                 showSuccessToast(`${selectedTitle.title} deleted successfully !!`);
                 setOpenDialog(false);
                 setSelectedTitle(null);
             } else {
-                toast.error(response.error);
+                toast.error(response.message || response.error);
             }
         } catch (error) {
-            toast.error(`Error in deleting ${selectedTitle.title}` || error.message);
+            toast.error(error.message || `Error deleting ${selectedTitle?.title}`);
         }
     };
 
     const handleFormSubmit = async (formData) => {
         try {
-            console.log("title form ==>> ", formData);
-
-            if (!formData) throw new Error("Invalid group data");
+            if (!formData) throw new Error("Invalid form data");
 
             const isEditing = Boolean(selectedTitle);
-            console.log(isEditing);
-
             let response;
+
             if (isEditing) {
-                console.log("edit passed");
-
-                response = await updateTitle({ title: formData.title, unit_id: formData.unit_id, user_id: user.emp_id, id: formData.id });
+                response = await updateTitle({
+                    title: formData.title,
+                    unit_id: formData.unit_id,
+                    user_id: user.emp_id,
+                    id: formData.id,
+                });
             } else {
-                console.log("add passed");
-
-                response = await addTitle({ title: formData.title, unit_id: formData.unit_id, user_id: user.emp_id });
+                response = await addTitle({
+                    title: formData.title,
+                    unit_id: formData.unit_id,
+                    user_id: user.emp_id,
+                });
             }
 
             if (response.status === 200 && response.success === true) {
-                console.log("response",response.data);
-                
+                // const updatedData = {
+                //     ...response.data,
+                //     unit_id:
+                //         response.data.unit_id ??
+                //         (response.data.exam_parts_id != null ? Number(response.data.exam_parts_id) : null),
+                // };
                 const updatedData = response.data;
-                if (isEditing) {
-                    setTitle((prev) => prev.map((data) => (data.id === selectedTitle.id ? updatedData : data)));
-                    showSuccessToast(`${updatedData.title} updated successfully!`);
-                } else {
-                    setTitle((prev) => [...prev, updatedData]);
-                    showSuccessToast(`${updatedData.title} added successfully!`);
-                }
+
+                setTitle((prev) => {
+                    if (isEditing) {
+                        return prev.map((item) => (item.id === selectedTitle.id ? updatedData : item));
+                    } else {
+                        return [...prev, updatedData];
+                    }
+                });
+
+                showSuccessToast(
+                    `${updatedData.title} ${isEditing ? "updated" : "added"} successfully!`
+                );
+
                 setSelectedTitle(null);
                 setOpenFormModal(false);
             } else {
-                throw new Error(response.message || "Failed to save group");
+                throw new Error(response.message || "Failed to save title");
             }
         } catch (error) {
-            toast.error();
+            toast.error(error.message || "Something went wrong ❌");
         }
     };
 
     return (
-        <>
-            <div>
-                <p className="title mb-5 text-center">Titles</p>
-                <TitleHeader
-                    unitsData={units}
-                    onClick={() => setOpenFormModal(true)}
-                    onSelectUnit={handleUnitSelect}
-                />
+        <div>
+            <p className="title mb-5 text-center">Titles</p>
+            <TitleHeader
+                unitsData={units}
+                onClick={() => setOpenFormModal(true)}
+                onSelectUnit={handleUnitSelect}
+            />
 
-                {loading ? (
-                    <LoadingSpinner message={"Loading Units...."} />
-                ) : title.length === 0 ? (
-                    <div className="m-5 flex w-full justify-center">
-                        <div className="card w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-md dark:bg-slate-900">
-                            <div className="flex flex-col items-center justify-center">
-                                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-                                    <img
-                                        src={photo}
-                                        alt="No Data"
-                                        className="h-16 w-16 opacity-80"
-                                    />
-                                </div>
-                                <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-200">No Titles Found</h3>
-                                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                    It looks like there are no Titles created yet.
-                                    <br />
-                                    Click <span className="font-medium text-green-600 dark:text-green-400">Add Titles</span> to get started.
-                                </p>
+            {loading ? (
+                <LoadingSpinner message={"Loading Titles..."} />
+            ) : filteredTitles.length === 0 ? (
+                <div className="m-5 flex w-full justify-center">
+                    <div className="card w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-md dark:bg-slate-900">
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="flex h-32 w-32 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+                                <img
+                                    src={photo}
+                                    alt="No Data"
+                                    className="h-16 w-16 opacity-80"
+                                />
                             </div>
+                            <h3 className="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-200">
+                                No Titles Found
+                            </h3>
+                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                It looks like there are no Titles created yet.
+                                <br />
+                                Click{" "}
+                                <span className="font-medium text-green-600 dark:text-green-400">
+                                    Add Titles
+                                </span>{" "}
+                                to get started.
+                            </p>
                         </div>
                     </div>
-                ) : (
-                    <TitleList
-                        titleData={title}
-                        onEdit={(data) => {
-                            setSelectedTitle(data);
-                            setOpenFormModal(true);
-                        }}
-                        onDelete={(data) => {
-                            setSelectedTitle(data);
-                            setOpenDialog(true);
-                        }}
-                    />
-                )}
-
-                {/* delete dialog box */}
-                <ConfirmDialog
-                    open={openDialog}
-                    onClose={() => setOpenDialog(false)}
-                    onConfirm={confirmDelete}
-                    title="Confirm Deletion"
-                    message={
-                        <p className="card-title text-center font-semibold text-gray-700">
-                            Are you sure you want to delete <span className="font-semibold text-red-500">{selectedTitle?.title}</span>?
-                        </p>
-                    }
+                </div>
+            ) : (
+                <TitleList
+                    titleData={filteredTitles}
+                    onEdit={(data) => {
+                        setSelectedTitle(data);
+                        setOpenFormModal(true);
+                    }}
+                    onDelete={(data) => {
+                        setSelectedTitle(data);
+                        setOpenDialog(true);
+                    }}
                 />
+            )}
 
-                {/* Add or update the Modal form */}
-                <Modal
-                    open={openFormModal}
+            {/* delete dialog */}
+            <ConfirmDialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                onConfirm={confirmDelete}
+                title="Confirm Deletion"
+                message={
+                    <p className="card-title text-center font-semibold text-gray-700">
+                        Are you sure you want to delete{" "}
+                        <span className="font-semibold text-red-500">
+                            {selectedTitle?.title}
+                        </span>
+                        ?
+                    </p>
+                }
+            />
+
+            {/* Add or update Modal form */}
+            <Modal
+                open={openFormModal}
+                onClose={() => {
+                    setSelectedTitle(null);
+                    setOpenFormModal(false);
+                }}
+                title={selectedTitle ? "Edit Title" : "Add New Title"}
+            >
+                <TitleForm
+                    initialData={selectedTitle}
+                    unitsData={units}
                     onClose={() => {
                         setSelectedTitle(null);
                         setOpenFormModal(false);
                     }}
-                    title={selectedTitle ? "Edit Unit" : "Add New Unit"}
-                >
-                    <TitleForm
-                        initialData={selectedTitle}
-                        unitsData={units}
-                        onClose={() => {
-                            setSelectedTitle(null);
-                            setOpenFormModal(false);
-                        }}
-                        onSubmit={handleFormSubmit}
-                    />
-                </Modal>
-            </div>
-        </>
+                    onSubmit={handleFormSubmit}
+                />
+            </Modal>
+        </div>
     );
 }

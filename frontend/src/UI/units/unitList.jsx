@@ -1,8 +1,6 @@
 import UnitCard from "./unitCard";
 
 export default function UnitList({ unitsData, onEdit, onDelete }) {
-    console.log("unitList", unitsData);
-
     return (
         <>
             <div className="flex flex-wrap justify-around gap-y-2">

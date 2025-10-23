@@ -5,6 +5,7 @@ import SignUp from "../pages/Auth/signUp/signUp";
 import SubjectsPage from "../pages/subjects/subjects";
 import UnitsPage from "../pages/units/units";
 import TitlePage from "../pages/title/title";
+import QuestionPage from "../pages/questions/questions";
 
 export const ProtectedPages = [
     {
@@ -31,6 +32,11 @@ export const ProtectedPages = [
         path: "/title",
         title: "Titles",
         element: <TitlePage />,
+    },
+    {
+        path: "/question",
+        title: "Questions",
+        element: <QuestionPage />,
     },
 ];
 
