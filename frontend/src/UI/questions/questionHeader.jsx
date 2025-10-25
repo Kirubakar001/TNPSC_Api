@@ -1,14 +1,39 @@
+import { useState } from "react";
 import AddButton from "@/components/addButton/addButton";
 
-export default function QuestionHeader() {
+export default function QuestionHeader({ titlesData = [], onClick, onSelectUnit }) {
+    const handleSelectChange = (e) => {
+        const selectedId = e.target.value;
+        if (onSelectUnit) {
+            onSelectUnit(selectedId);
+        }
+    };
+
     return (
-        <>
-            <div>
-                <div></div>
-                <div>
-                    <AddButton />
-                </div>
-            </div>
-        </>
+        <div className="mb-5 flex items-center justify-between">
+            {/* Dropdown replaces the "Units" text */}
+            <select
+                className="rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                defaultValue=""
+                onChange={handleSelectChange}
+            >
+                <option value="all">All Questions</option>
+                {titlesData.map((data, index) => (
+                    <option
+                        key={index}
+                        value={data.id}
+                    >
+                        {data.title}
+                    </option>
+                ))}
+            </select>
+
+            {/* Add button on the right */}
+            <AddButton
+                label="Add Questions"
+                onClick={onClick}
+                theme="green"
+            />
+        </div>
     );
 }
