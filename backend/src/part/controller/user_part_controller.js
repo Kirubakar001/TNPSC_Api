@@ -3,7 +3,7 @@ const userExamService = require("../service/user_part_service");
 const getAllParts = async (req, res) => {
   try {
   
-    const details = await userExamService.getAllParts ();
+    const details = await userExamService.getAllParts();
  
 
     if (!details || details.length === 0) {

@@ -1,9 +1,10 @@
 const db = require("../../db");
 
-const getAllTitle = async (req, res) => {
+const getAllTitle = async (unitId) => {
   try {
     const [rows] = await db.query(
-      "SELECT id,unit_id,ques_count,title FROM title"
+      "SELECT id,unit_id,ques_count,title FROM title where unit_id = ?",
+      [unitId]
     );
     return rows;
   } catch (error) {

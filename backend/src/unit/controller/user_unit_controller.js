@@ -2,7 +2,14 @@ const userExamService = require("../service/user_unit_service");
 
 const getAllUnit = async (req, res) => {
   try {
-    const details = await userExamService.getAllUnit();
+    let { part_id } = req.body;
+    if (!part_id) {
+      return res
+        .status(400)
+        .json({ status: "failure", message: "part_id key Required" });
+    }
+
+    const details = await userExamService.getAllUnit(part_id);
 
     if (!details || details.length === 0) {
       return res.status(200).json({

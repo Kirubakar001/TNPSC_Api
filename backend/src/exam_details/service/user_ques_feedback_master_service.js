@@ -6,7 +6,7 @@ const getAllFeedbackMaster = async (userId, ques_id) => {
 
     return rows;
   } catch (error) {
-    throw new Error("Error adding bookmark: " + error.message);
+    throw new Error("Error : " + error.message);
   }
 };
 
