@@ -18,23 +18,22 @@ const questionFeedBack = async (req, res) => {
 
     if (!allData || allData.length === 0) {
       return res.status(404).json({
-        success: false,
-          status:"success",
+        status: "failure",
         message: "No bookmarks found",
       });
     }
 
     res.status(200).json({
-      success: true,
-      status:"success",
-      data: allData,
-      message: "Bookmarks fetched successfully",
+      status: "success",
+      message: " Added successfully",
     });
   } catch (error) {
-    console.error("Error fetching exam details:", error);
-    res
-      .status(500)
-      .json({ status: "failure", message: "Internal Server Error" });
+    console.error("Error add ques Feedback details:", error);
+    res.status(500).json({
+      status: "failure",
+      message: "Internal Server Error",
+      error: error,
+    });
   }
 };
 module.exports = {

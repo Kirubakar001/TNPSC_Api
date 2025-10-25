@@ -61,17 +61,22 @@ const insertUnit = async (req, res) => {
 const updateUnit = async (req, res) => {
   try {
     console.log("update unit called");
-    const { id, title, user_id,part_id } = req.body;
+    const { id, title, user_id, part_id } = req.body;
     if (!id) {
       return res.status(400).json({ success: false, message: "ID required" });
     }
 
-    const updated = await adminSubjectService.updateUnit(id, title, user_id,part_id);
+    const updated = await adminSubjectService.updateUnit(
+      id,
+      title,
+      user_id,
+      part_id
+    );
     res.status(200).json({
       status: 200,
       success: true,
       message: "Updated successfully",
-      updated,
+      data: updated,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -80,11 +85,11 @@ const updateUnit = async (req, res) => {
 
 const deleteUnit = async (req, res) => {
   try {
-    const { id ,user_id } = req.body;
+    const { id, user_id } = req.body;
     if (!id)
       return res.status(400).json({ success: false, message: "ID required" });
 
-    const deleted = await adminSubjectService.deleteUnit(id,user_id);
+    const deleted = await adminSubjectService.deleteUnit(id, user_id);
     res.status(200).json({
       success: true,
       status: 200,

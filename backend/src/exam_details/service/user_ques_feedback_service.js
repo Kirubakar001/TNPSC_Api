@@ -7,11 +7,11 @@ const addFeedback = async (userId, ques_id, type, feedback) => {
       [userId, ques_id, type, feedback]
     );
 
-    if (result.affectedRows === 0) return null;
+    if (rows.affectedRows === 0) return null;
 
     return rows;
   } catch (error) {
-    throw new Error("Error adding bookmark: " + error.message);
+    throw new Error("Error Feedback: " + error.message);
   }
 };
 
